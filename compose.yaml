@@ -1,0 +1,42 @@
+services:
+  mariadb:
+    image: mariadb:12.3
+    container_name: inventory-mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: rootsecretpassword
+      MARIADB_DATABASE: inventory_tracker
+      MARIADB_USER: inventory
+      MARIADB_PASSWORD: inventory123
+    expose:
+      - "3306"
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "-u", "inventory", "-pinventory123"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  api:
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: inventory-api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+      DATABASE_URL: mysql://inventory:inventory123@mariadb:3306/inventory_tracker
+      JWT_SECRET: supersecretjwtkeyforinventorytrackerproduction123!
+      LOG_LEVEL: info
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+volumes:
+  mariadb_data:
+    driver: local

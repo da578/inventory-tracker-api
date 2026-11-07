@@ -1,0 +1,56 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    name: Master 5-Gate CI Pipeline
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:12.3
+        env:
+          MARIADB_ROOT_PASSWORD: rootsecretpassword
+          MARIADB_DATABASE: inventory_tracker
+          MARIADB_USER: inventory
+          MARIADB_PASSWORD: inventory123
+        ports:
+          - 3306:3306
+        options: --health-cmd="mariadb-admin ping -h 127.0.0.1 -u inventory -pinventory123" --health-interval=5s --health-timeout=3s --health-retries=10
+
+    env:
+      DATABASE_URL: mysql://inventory:inventory123@127.0.0.1:3306/inventory_tracker
+      JWT_SECRET: supersecretjwtkeyforgithubactionsrunner123!
+      NODE_ENV: test
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun Runtime
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Task Runner CLI
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Apply Database Migrations
+        run: bun run db:migrate
+
+      - name: Seed Database
+        run: bun run db:seed
+
+      - name: Run Master 5-Gate CI Pipeline via Taskfile
+        run: task ci

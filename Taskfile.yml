@@ -1,0 +1,65 @@
+version: '3'
+
+vars:
+  APP_NAME: inventory-tracker-api
+
+tasks:
+  default:
+    desc: Display available tasks
+    cmds:
+      - task --list
+
+  typecheck:
+    desc: "Gate 1: Static type checking via TypeScript compiler"
+    cmds:
+      - bun run typecheck
+
+  lint:
+    desc: "Gate 2: Code quality and formatting verification via Biome"
+    cmds:
+      - bun run lint
+
+  format:
+    desc: "Auto-format codebase via Biome"
+    cmds:
+      - bun run format
+
+  test:unit:
+    desc: "Gate 3: Pure zero-I/O domain unit tests"
+    cmds:
+      - bun run test:unit
+
+  test:integration:
+    desc: "Gate 4: Database and HTTP integration tests"
+    cmds:
+      - bun run test:integration
+
+  docs:check:
+    desc: "Gate 5: TSDoc and documentation verification"
+    cmds:
+      - bun run docs:check
+
+  test:
+    desc: "Run complete test suite with coverage report"
+    cmds:
+      - bun test --coverage
+
+  build:
+    desc: "Bundle production artifact into dist/index.js"
+    cmds:
+      - bun run build
+
+  container:build:
+    desc: "Build OCI container image using Podman or Docker"
+    cmds:
+      - podman build -t {{.APP_NAME}}:latest -f Containerfile .
+
+  ci:
+    desc: "Execute Master 5-Gate Verification Pipeline (Typecheck, Lint, Unit, Integration, Docs, Build)"
+    cmds:
+      - task: typecheck
+      - task: lint
+      - task: test:unit
+      - task: test:integration
+      - task: docs:check
+      - task: build

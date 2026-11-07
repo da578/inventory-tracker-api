@@ -1,0 +1,74 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/dist
+/build
+
+# database
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+local.sqlite
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+
+# vercel
+.vercel
+
+# bun
+bun.lock
+*.bun
+.bun
+
+# typescript
+*.tsbuildinfo
+.tsbuildinfo
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# documentation
+docs/api
+typedoc.json.bak
+
+# test
+tests/**/*.trace
+tests/**/*.zip
+tests/**/*.tar.gz
+tests/**/*.tgz
+
+# temporary files
+*.tmp
+*.temp
+*.bak
+source.txt
+todo.txt

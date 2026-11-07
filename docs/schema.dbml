@@ -1,0 +1,68 @@
+// Architecture-as-Code: Relational Schema for Inventory Stock Tracker API
+
+Table users {
+  id varchar(36) [pk]
+  username varchar(255) [unique, not null]
+  password_hash varchar(255) [not null]
+  role enum('admin', 'staff') [not null]
+  created_at timestamp [not null]
+}
+
+Table refresh_tokens {
+  id varchar(36) [pk]
+  user_id varchar(36) [not null, ref: > users.id]
+  token varchar(500) [not null]
+  expires_at timestamp [not null]
+  created_at timestamp [not null]
+}
+
+Table categories {
+  id varchar(36) [pk]
+  name varchar(100) [unique, not null]
+  description text
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table suppliers {
+  id varchar(36) [pk]
+  name varchar(150) [not null]
+  contact_email varchar(255)
+  contact_phone varchar(50)
+  address text
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table products {
+  id varchar(36) [pk]
+  sku varchar(64) [unique, not null]
+  name varchar(255) [not null]
+  price double [not null]
+  quantity int [not null, default: 0]
+  low_stock_threshold int [not null, default: 0]
+  category_id varchar(36) [not null, ref: > categories.id]
+  supplier_id varchar(36) [not null, ref: > suppliers.id]
+  version int [not null, default: 1]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+Table stock_adjustments {
+  id varchar(36) [pk]
+  product_id varchar(36) [not null, ref: > products.id]
+  type enum('IN', 'OUT') [not null]
+  quantity int [not null]
+  reason text [not null]
+  created_by varchar(36) [not null, ref: > users.id]
+  created_at timestamp [not null]
+}
+
+Table idempotency_keys {
+  key varchar(255) [pk]
+  scope varchar(64) [not null]
+  request_hash varchar(64) [not null]
+  response_status int [not null]
+  response_body text [not null]
+  expires_at timestamp [not null]
+}

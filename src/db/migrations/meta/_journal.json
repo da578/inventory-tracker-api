@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1794023660968,
+      "tag": "0000_fearless_patch",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1794025380576,
+      "tag": "0001_massive_boomerang",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1794054465860,
+      "tag": "0002_fixed_energizer",
+      "breakpoints": true
+    }
+  ]
+}
